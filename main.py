@@ -1,8 +1,14 @@
 import qrcode
 
-data = "https://www.example.com"
+def main(): 
 
-qr=qrcode.make(data)
-qr.save("example.png")
+    link=input("Enter the link :")
 
-print("QR code created successfully")
+
+    qr=qrcode.make(link)
+    qr.save("example.png")
+
+    print("QR code created successfully")
+
+if __name__ == "__main__":
+    main()

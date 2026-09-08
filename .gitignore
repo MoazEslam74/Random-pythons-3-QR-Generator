@@ -1,2 +1,8 @@
 # created code
 *.png
+
+# Ignore the build directory
+/dist
+/build
+build_exe.py
+QR_Generator.spec

@@ -15,25 +15,21 @@ def toggle_language():
         lang = 'EN'
     update_ui_texts()
     
-def paste_arabic(event):
-    """Function to support paste shortcut when the keyboard is in Arabic mode"""
-    event.widget.event_generate("<<Paste>>")
-    return "break"
-
-def selectAll_arabic(event):
-    """Function to support selectAll shortcut when the keyboard is in Arabic mode"""
-    event.widget.event_generate("<<SelectAll>>")
-    return "break"
-
-def copy_arabic(event):
-    """Function to support copy shortcut when the keyboard is in Arabic mode"""
-    event.widget.event_generate("<<Copy>>")
-    return "break"
-
-def cut_arabic(event):
-    """Function to support cut shortcut when the keyboard is in Arabic mode"""
-    event.widget.event_generate("<<Cut>>")
-    return "break"
+def handle_arabic_shortcuts(event):
+    """Function of handlig the importamt Arabic shortcuts"""
+    # Check Crtl + key combinations
+    if event.keycode == 86:
+        event.widget.event_generate("<<Paste>>")
+        return "break"
+    elif event.keycode == 67:
+        event.widget.event_generate("<<Copy>>")
+        return "break"
+    elif event.keycode == 88:
+        event.widget.event_generate("<<Cut>>")
+        return "break"
+    elif event.keycode == 65:
+        event.widget.event_generate("<<SelectAll>>")
+        return "break"
 
 def update_ui_texts():
     """Function to change the interface text based on the current language"""
@@ -175,10 +171,7 @@ link_entry = tk.Entry(root, width=40, font=("Arial", 12))
 link_entry.pack(pady=5)
 
 #Arabic shortcuts
-link_entry.bind("<Control-ر>", paste_arabic)
-link_entry.bind("<Control-ش>", selectAll_arabic) # Ctrl + a
-link_entry.bind("<Control-ؤ>", copy_arabic)      # Ctrl + c
-link_entry.bind("<Control-ء>", cut_arabic)       # Ctrl + x
+link_entry.bind("<Control-KeyPress>", handle_arabic_shortcuts)   # Ctrl + x
 # Decorative separator line
 tk.Frame(root, height=2, bd=1, relief=tk.SUNKEN).pack(fill=tk.X, padx=20, pady=10)
 

@@ -2,7 +2,7 @@ import qrcode
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk, ImageDraw
-
+import webbrowser
 lang = 'EN'
 selected_icon_path = None  # Variable to store the selected image path
 
@@ -31,6 +31,22 @@ def handle_arabic_shortcuts(event):
         event.widget.event_generate("<<SelectAll>>")
         return "break"
 
+def preview_link():
+    link = link_entry.get()
+    if not link:
+        if lang == 'EN':
+            messagebox.showwarning("Warning", "Please enter the link first!")
+        else:
+            messagebox.showwarning("تنبيه", "يرجى إدخال الرابط أولاً!")
+        return
+    
+    # Ensure the link has http or https so it opens correctly
+    if not link.startswith(("http://", "https://")):
+        link = "http://" + link
+        
+    # فتح الرابط للتأكد منه
+    webbrowser.open(link)
+
 def update_ui_texts():
     """Function to change the interface text based on the current language"""
     if lang == 'EN':
@@ -49,6 +65,7 @@ def update_ui_texts():
         rb_rounded.config(text="Rounded")
         rb_circle.config(text="Circle")
         generate_btn.config(text="Generate QR Code")
+        preview_btn.config(text="Preview")
     else:
         root.title("صانع الـ QR Code المتقدم")
         lang_btn.config(text="English")
@@ -65,7 +82,7 @@ def update_ui_texts():
         rb_rounded.config(text="حواف دائرية")
         rb_circle.config(text="دائري")
         generate_btn.config(text="إنشاء رمز QR")
-
+        preview_btn.config(text="معاينة")
 def choose_icon():
     global selected_icon_path
     file_path = filedialog.askopenfilename(
@@ -167,11 +184,18 @@ lang_btn.pack(anchor="ne", padx=10, pady=5)
 title_label = tk.Label(root, text="Enter the link here:", font=("Arial", 12, "bold"))
 title_label.pack(pady=(5, 5))
 
-link_entry = tk.Entry(root, width=40, font=("Arial", 12))
-link_entry.pack(pady=5)
+# Container for the input field and preview button
+input_frame = tk.Frame(root)
+input_frame.pack(pady=5)
 
-#Arabic shortcuts
-link_entry.bind("<Control-KeyPress>", handle_arabic_shortcuts)   # Ctrl + x
+link_entry = tk.Entry(input_frame, width=30, font=("Arial", 12))
+link_entry.pack(side=tk.LEFT, padx=5)
+link_entry.bind("<Control-KeyPress>", handle_arabic_shortcuts)
+
+# Preview button
+preview_btn = tk.Button(input_frame, text="Preview", command=preview_link, font=("Arial", 10, "bold"), bg="#FF9800", fg="white", cursor="hand2")
+preview_btn.pack(side=tk.LEFT, padx=5)
+
 # Decorative separator line
 tk.Frame(root, height=2, bd=1, relief=tk.SUNKEN).pack(fill=tk.X, padx=20, pady=10)
 

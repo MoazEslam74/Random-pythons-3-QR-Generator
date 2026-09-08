@@ -6,13 +6,49 @@ from PIL import Image, ImageTk, ImageDraw
 lang = 'EN'
 selected_icon_path = None  # Variable to store the selected image path
 
-def languageTuggle():
+def toggle_language():
+    """Function to switch languages and update the interface"""
     global lang
     if lang == 'EN':
         lang = 'AR'
     else:
         lang = 'EN'
-    # You can later connect this function to a button to update the UI text
+    update_ui_texts()
+
+def update_ui_texts():
+    """Function to change the interface text based on the current language"""
+    if lang == 'EN':
+        root.title("Advanced QR Code Generator")
+        lang_btn.config(text="عربي")
+        title_label.config(text="Enter the link here:")
+        icon_label_title.config(text="Add an Icon (Optional):")
+        icon_btn.config(text="Browse Icon...")
+        
+        if selected_icon_path:
+            icon_label.config(text="Icon Selected ✅")
+        else:
+            icon_label.config(text="No icon selected")
+            
+        rb_square.config(text="Square")
+        rb_rounded.config(text="Rounded")
+        rb_circle.config(text="Circle")
+        generate_btn.config(text="Generate QR Code")
+    else:
+        root.title("صانع الـ QR Code المتقدم")
+        lang_btn.config(text="English")
+        title_label.config(text="أدخل الرابط هنا:")
+        icon_label_title.config(text="إضافة أيقونة (اختياري):")
+        icon_btn.config(text="تصفح الأيقونة...")
+        
+        if selected_icon_path:
+            icon_label.config(text="تم اختيار الأيقونة ✅")
+        else:
+            icon_label.config(text="لم يتم اختيار أيقونة")
+            
+        rb_square.config(text="مربع")
+        rb_rounded.config(text="حواف دائرية")
+        rb_circle.config(text="دائري")
+        generate_btn.config(text="إنشاء رمز QR")
 
 def choose_icon():
     global selected_icon_path
@@ -25,7 +61,7 @@ def choose_icon():
         icon_label.config(text="Icon Selected ✅" if lang == 'EN' else "تم اختيار الأيقونة ✅")
 
 def apply_mask(img, shape):
-    """Function to crop the image according to the selected shape"""
+    """Crop the image according to the selected shape"""
     img = img.convert("RGBA")
     mask = Image.new("L", img.size, 0)
     draw = ImageDraw.Draw(mask)
@@ -35,9 +71,9 @@ def apply_mask(img, shape):
     if shape == "circle":
         draw.ellipse((0, 0, width, height), fill=255)
     elif shape == "rounded":
-        radius = width // 5  # Set the corner rounding ratio
+        radius = width // 5 
         draw.rounded_rectangle((0, 0, width, height), radius=radius, fill=255)
-    else:  # square
+    else:  
         draw.rectangle((0, 0, width, height), fill=255)
         
     result = Image.new("RGBA", img.size)
@@ -55,44 +91,35 @@ def generate_qr():
         return
 
     try:
-        # Use advanced QR settings to keep it readable after adding the logo
         qr = qrcode.QRCode(
-            version=4, # Base square size
-            error_correction=qrcode.constants.ERROR_CORRECT_H, # Very high error correction (important when adding a logo)
+            version=4, 
+            error_correction=qrcode.constants.ERROR_CORRECT_H, 
             box_size=10,
             border=4,
         )
         qr.add_data(link)
         qr.make(fit=True)
         
-        # Create the QR image
         qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGBA")
         
-        # If an icon was selected
         if selected_icon_path:
             icon = Image.open(selected_icon_path)
             
-            # Set the icon size to about a quarter of the QR code size
             factor = 4
             icon_size = (qr_img.size[0] // factor, qr_img.size[1] // factor)
             icon = icon.resize(icon_size, Image.Resampling.LANCZOS)
             
-            # Crop the icon to the selected shape
             shape = shape_var.get()
             icon = apply_mask(icon, shape)
             
-            # Calculate the coordinates to place the icon in the center
             pos_x = (qr_img.size[0] - icon_size[0]) // 2
             pos_y = (qr_img.size[1] - icon_size[1]) // 2
             
-            # Merge the icon with the QR code
-            qr_img.paste(icon, (pos_x, pos_y), icon) # Pass icon as the mask for transparency
+            qr_img.paste(icon, (pos_x, pos_y), icon) 
         
-        # Save the final image
         file_name = "Exported.png"
         qr_img.save(file_name)
         
-        # Display the image inside the interface
         qr_img_resized = qr_img.resize((200, 200)) 
         tk_img = ImageTk.PhotoImage(qr_img_resized)
         
@@ -113,12 +140,16 @@ def generate_qr():
 # Set up the window
 root = tk.Tk()
 root.title("Advanced QR Code Generator")
-root.geometry("400x650") # Slightly enlarge the window to fit the new elements
+root.geometry("400x680") # Slight increase in height to fit the new button
 root.eval('tk::PlaceWindow . center')
+
+# Language toggle button (placed at the top-right)
+lang_btn = tk.Button(root, text="عربي", command=toggle_language, font=("Arial", 10, "bold"), bg="#2196F3", fg="white", cursor="hand2")
+lang_btn.pack(anchor="ne", padx=10, pady=5)
 
 # Link title
 title_label = tk.Label(root, text="Enter the link here:", font=("Arial", 12, "bold"))
-title_label.pack(pady=(15, 5))
+title_label.pack(pady=(5, 5))
 
 link_entry = tk.Entry(root, width=40, font=("Arial", 12))
 link_entry.pack(pady=5)
@@ -130,7 +161,7 @@ tk.Frame(root, height=2, bd=1, relief=tk.SUNKEN).pack(fill=tk.X, padx=20, pady=1
 icon_label_title = tk.Label(root, text="Add an Icon (Optional):", font=("Arial", 10, "bold"))
 icon_label_title.pack(pady=5)
 
-icon_btn = tk.Button(root, text="Browse Icon...", command=choose_icon, font=("Arial", 10))
+icon_btn = tk.Button(root, text="Browse Icon...", command=choose_icon, font=("Arial", 10), cursor="hand2")
 icon_btn.pack(pady=5)
 
 icon_label = tk.Label(root, text="No icon selected", fg="gray")
@@ -142,15 +173,20 @@ shape_var = tk.StringVar(value="square") # Default shape
 shape_frame = tk.Frame(root)
 shape_frame.pack(pady=10)
 
-tk.Radiobutton(shape_frame, text="Square", variable=shape_var, value="square").pack(side=tk.LEFT, padx=5)
-tk.Radiobutton(shape_frame, text="Rounded", variable=shape_var, value="rounded").pack(side=tk.LEFT, padx=5)
-tk.Radiobutton(shape_frame, text="Circle", variable=shape_var, value="circle").pack(side=tk.LEFT, padx=5)
+rb_square = tk.Radiobutton(shape_frame, text="Square", variable=shape_var, value="square", cursor="hand2")
+rb_square.pack(side=tk.LEFT, padx=5)
+
+rb_rounded = tk.Radiobutton(shape_frame, text="Rounded", variable=shape_var, value="rounded", cursor="hand2")
+rb_rounded.pack(side=tk.LEFT, padx=5)
+
+rb_circle = tk.Radiobutton(shape_frame, text="Circle", variable=shape_var, value="circle", cursor="hand2")
+rb_circle.pack(side=tk.LEFT, padx=5)
 
 # Decorative separator line
 tk.Frame(root, height=2, bd=1, relief=tk.SUNKEN).pack(fill=tk.X, padx=20, pady=10)
 
 # QR Code generation button
-generate_btn = tk.Button(root, text="Generate QR Code", command=generate_qr, font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", padx=10)
+generate_btn = tk.Button(root, text="Generate QR Code", command=generate_qr, font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", padx=10, cursor="hand2")
 generate_btn.pack(pady=10)
 
 # Image display area

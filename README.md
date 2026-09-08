@@ -1,6 +1,7 @@
 <p align="center">
-  <img src="RP_Certificates_Generator.ico" alt="Centered image" width="300">
+  <img src="RP_QR_Generator.ico" alt="Centered image" width="300">
 </p>
+
 # Advanced QR Code Generator
 
 A feature-rich desktop application built with Python and Tkinter that allows users to generate high-quality QR codes from URLs. The application includes advanced features such as embedding custom logos, link previewing, dual-language support, and smart keyboard shortcut handling.
@@ -38,3 +39,18 @@ The app relies on `qrcode` and `Pillow`. You can install them via pip. Open your
 
 ```bash
 pip install qrcode pillow
+```
+*(Note: `tkinter` and `webbrowser` come pre-installed with Python standard library).*
+
+## 💡 How to Use
+1. **Enter Link:** Paste or type your desired URL into the text field.
+
+2. **Preview (Optional):** Click the Preview button to open the link in your browser and verify it works.
+
+3. **Add Icon (Optional):** Click Browse Icon... to select an image from your computer. Select your preferred icon shape (Square, Rounded, or Circle).
+
+4. **Generate:** Click the Generate QR Code button.
+
+5. **View & Use:** The QR code will appear on the screen, and a file named Exported.png will be automatically saved in the same folder as the script.
+
+6. **Change Language:** Click the language toggle button at the top right corner to switch between Arabic and English.
